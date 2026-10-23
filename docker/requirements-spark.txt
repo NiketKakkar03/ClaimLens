@@ -1,0 +1,6 @@
+delta-spark>=4,<5
+hatchling>=1.27,<2
+numpy>=2,<3
+pandas>=2.2,<3
+pyspark>=4,<5
+typer>=0.15,<1

@@ -38,6 +38,7 @@ The trained thresholds were 14,274.48 for elevated priority and 22,734.62 for ur
 - Ruff formatting and lint checks passed.
 - Docker Compose configuration validation passed.
 - The API integration test accepted a valid claim and rejected a negative initial estimate with HTTP 422.
+- The one-command Docker demonstration returned a standard-priority prediction of 9,489.33, exposed its exact model version, and incremented the Prometheus success counter.
 
 ## Interpretation and limitations
 

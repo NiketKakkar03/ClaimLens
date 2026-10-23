@@ -65,19 +65,12 @@ def build_training_rows(policies: pd.DataFrame, claims: pd.DataFrame) -> pd.Data
         one_year_ago = prediction_time - 365 * 86_400 * 1_000_000_000
         two_years_ago = prediction_time - 730 * 86_400 * 1_000_000_000
         prior = history.get(row.policy_id, [])
-        prior_count.append(
-            sum(
-                1
-                for reported_at, _, _ in prior
-                if reported_at >= one_year_ago
-            )
-        )
+        prior_count.append(sum(1 for reported_at, _, _ in prior if reported_at >= one_year_ago))
         prior_paid.append(
             sum(
                 amount
                 for reported_at, closed_at, amount in prior
-                if reported_at >= two_years_ago
-                and closed_at <= prediction_time
+                if reported_at >= two_years_ago and closed_at <= prediction_time
             )
         )
         history.setdefault(row.policy_id, []).append(

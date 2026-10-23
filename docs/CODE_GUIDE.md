@@ -10,6 +10,7 @@ This is the navigation map for implemented code. It will grow after every milest
 | `src/claims_intelligence/domain.py` | Defines the shared review-priority vocabulary. | Prevents different layers from inventing conflicting labels. |
 | `src/claims_intelligence/data/synthetic.py` | Generates linked, reproducible synthetic policy and claim records and writes CSV files. | Provides safe data with a known relationship between inputs and severity. |
 | `src/claims_intelligence/data/features.py` | Builds model features using only information available at the claim's report time. | Prevents future information from leaking into training. |
+| `src/claims_intelligence/data/lakehouse.py` | Uses local Spark and Delta Lake to write raw Bronze data, validated Silver and quarantine data, and point-in-time Gold features. | Teaches the same medallion and time-awareness ideas used by managed lakehouse platforms without requiring a paid account. |
 | `src/claims_intelligence/training/train.py` | Uses chronological splits, compares a median baseline with a random forest, records MLflow runs, evaluates the winner, and saves it. | Makes model selection measurable and repeatable. |
 | `src/claims_intelligence/training/artifact.py` | Packages preprocessing, model, thresholds, metadata, and one prediction interface in a versioned artifact. | Training and serving use the same transformations and decision rules. |
 | `src/claims_intelligence/training/evidence.py` | Writes metrics as JSON and a readable model card. | Preserves results and limitations for later review. |
@@ -20,6 +21,9 @@ This is the navigation map for implemented code. It will grow after every milest
 | `tests/unit/test_features.py` | Checks point-in-time history, including the rule that an unclosed claim has no known payment. | Guards against training leakage. |
 | `tests/integration/test_training_and_api.py` | Trains a real artifact and sends a request through the API. | Proves the local path works end to end. |
 | `Dockerfile` | Builds a non-root inference API image. | Creates a portable serving unit. |
+| `Dockerfile.spark` | Builds a non-root Java/Python image for the local Spark/Delta job. | Lets a learner run the lakehouse path without installing Java on the host. |
+| `docker/requirements-*.txt` | Separates runtime dependencies for inference and Spark container images. | Keeps training-only packages out of serving and makes code-only rebuilds fast. |
 | `compose.yaml` | Runs the API with its locally trained artifact and a readiness check. | Makes container testing understandable and repeatable. |
 | `Makefile` | Groups common install, validation, training, and serving commands. | Reduces command memorization. |
+| `scripts/demo_local.sh` | Trains on 1,000 claims, starts the inference container, waits for readiness, requests a prediction, and prints metrics and access URLs. | Proves the local vertical slice through one learner-facing command. |
 | `.github/workflows/ci.yml` | Runs formatting, linting, and tests on pushes and pull requests. | Supplies automated quality evidence. |

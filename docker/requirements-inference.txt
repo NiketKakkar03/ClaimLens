@@ -1,0 +1,9 @@
+fastapi>=0.115,<1
+hatchling>=1.27,<2
+joblib>=1.4,<2
+numpy>=2,<3
+pandas>=2.2,<3
+prometheus-client>=0.21,<1
+pydantic>=2.10,<3
+scikit-learn>=1.6,<2
+uvicorn[standard]>=0.34,<1

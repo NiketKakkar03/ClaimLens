@@ -1,4 +1,8 @@
+import json
+from pathlib import Path
+
 from fastapi.testclient import TestClient
+from jsonschema import Draft202012Validator
 
 from claims_intelligence.data.features import build_training_rows
 from claims_intelligence.data.synthetic import generate_synthetic_data
@@ -33,10 +37,16 @@ def test_trained_artifact_serves_prediction(tmp_path) -> None:
         "coverage_type": "standard",
         "deductible_band": "medium",
     }
+    request_contract = json.loads(Path("contracts/prediction_request.schema.json").read_text())
+    Draft202012Validator(request_contract).validate(payload)
     with TestClient(create_app(loaded)) as client:
         response = client.post("/v1/predictions/claim-severity", json=payload)
         assert response.status_code == 200
         body = response.json()
+        response_contract = json.loads(
+            Path("contracts/prediction_response.schema.json").read_text()
+        )
+        Draft202012Validator(response_contract).validate(body)
         assert body["claim_id"] == payload["claim_id"]
         assert body["predicted_severity"] >= 0
         assert body["priority_band"] in {"standard", "elevated", "urgent"}

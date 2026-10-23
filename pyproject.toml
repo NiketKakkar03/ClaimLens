@@ -12,7 +12,6 @@ dependencies = [
   "fastapi>=0.115,<1",
   "httpx>=0.27,<1",
   "joblib>=1.4,<2",
-  "mlflow>=3.0,<4",
   "numpy>=2.0,<3",
   "pandas>=2.2,<3",
   "prometheus-client>=0.21,<1",
@@ -24,9 +23,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "jsonschema>=4.23,<5",
   "pytest>=8.3,<9",
   "pytest-cov>=6,<7",
   "ruff>=0.11,<1",
+]
+training = [
+  "mlflow>=3.0,<4",
 ]
 spark = [
   "delta-spark>=4,<5",

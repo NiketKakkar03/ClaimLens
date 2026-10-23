@@ -10,7 +10,7 @@ Build the complete data-to-prediction workflow locally first, then deliver the w
 
 ## Run the local severity slice
 
-Requirements: Python 3.12 and [uv](https://docs.astral.sh/uv/). These commands do not call paid services.
+Requirements: Python 3.12, [uv](https://docs.astral.sh/uv/), and Docker Desktop for the optional container run. These commands do not call paid services.
 
 ```bash
 make install
@@ -22,7 +22,11 @@ make serve
 
 Open the interactive API documentation at <http://localhost:8000/docs>, readiness at <http://localhost:8000/health/ready>, and Prometheus-format service metrics at <http://localhost:8000/metrics>. Training results are written to `artifacts/model/training-metrics.json` and `artifacts/model/MODEL_CARD.md`; MLflow uses the local database `artifacts/mlflow.db`.
 
-After `make build-local`, the same API can run in a container with `docker compose up --build`. The later application milestone will add the dashboard, database, and login service to this normal startup path.
+After `make build-local`, the same API can run in a container with `docker compose up --build`. Its host URLs use port `8010` by default so they do not compete with common port-8000 development services; set `CLAIMS_API_PORT` to override it. The later application milestone will add the dashboard, database, and login service to this normal startup path.
+
+To learn the medallion lakehouse flow without a paid Databricks account or a host Java installation, run `make docker-lakehouse` after `make build-local`. It creates local Delta tables under `data/lakehouse`: raw Bronze inputs, validated Silver claims, quarantined invalid claims, and point-in-time Gold features. The container downloads Delta's matching Java packages on its first run, so that first run requires internet access.
+
+For the complete one-command training-to-prediction demonstration, run `make demo`. It trains a small reproducible model, starts the container, waits for model readiness, prints a real prediction and its Prometheus metrics, and leaves the API running for exploration. Stop it with `docker compose down`.
 
 ## Documentation
 
@@ -38,6 +42,7 @@ After `make build-local`, the same API can run in a container with `docker compo
 - [Baseline success metrics](docs/baseline-success-metrics.md): acceptance criteria that later evidence must substantiate.
 - [Code guide](docs/CODE_GUIDE.md): file-by-file explanation of implemented scripts and how their logic connects.
 - [First local baseline evidence](docs/evidence/local-baseline-2026-10-22.md): recorded candidate comparison, held-out results, verification, and limitations.
+- [Local Spark/Delta evidence](docs/evidence/local-lakehouse-2026-10-22.md): measured medallion row counts, issues found, and local container facts.
 
 ## Architecture decisions
 
