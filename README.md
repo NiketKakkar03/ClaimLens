@@ -38,6 +38,10 @@ The current interface uses one local reviewer identity so the workflow is easy t
 
 Run `make monitoring` to start Prometheus and Grafana alongside inference. Open Grafana at <http://localhost:3001> using the documented local-only credentials `admin` / `local-only-admin`; the provisioned Claims Intelligence Overview dashboard is ready without manual setup. Prometheus is available at <http://localhost:9091>. Run `make drift-report` to write JSON and Markdown results under `artifacts/monitoring/`. The inference incident procedure is in [the runbook](docs/runbooks/inference-api.md).
 
+## Review the AWS plan without spending money
+
+The Terraform foundation is under [`infra/terraform`](infra/terraform/README.md). It defines S3, ECR, IAM, and an optional small EKS environment, but `create_eks` defaults to `false`. Formatting and validation run locally and in CI without creating resources. Do not run `terraform apply` until the account's credits, plan, expected price, access CIDR, and same-day teardown have been reviewed. No AWS resources have been created by this project.
+
 ## Documentation
 
 - [Original project proposal](Project.md): the initial architecture, technology scope, and roadmap. Read with the interview record because some details have changed during design.
@@ -55,6 +59,7 @@ Run `make monitoring` to start Prometheus and Grafana alongside inference. Open 
 - [Local Spark/Delta evidence](docs/evidence/local-lakehouse-2026-10-22.md): measured medallion row counts, issues found, and local container facts.
 - [Reviewer application evidence](docs/evidence/reviewer-application-2026-10-22.md): verified UI/API/PostgreSQL workflow, RBAC denial, build results, and current login limitation.
 - [Model lifecycle and monitoring evidence](docs/evidence/model-monitoring-2026-10-23.md): three-candidate comparison, MLflow registry verification, drift results, and live dashboard checks.
+- [Terraform validation evidence](docs/evidence/terraform-validation-2026-10-23.md): defined AWS resources, local validation, cost gates, and the explicit no-apply boundary.
 
 ## Architecture decisions
 

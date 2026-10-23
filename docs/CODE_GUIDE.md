@@ -33,6 +33,16 @@ This is the navigation map for implemented code. It will grow after every milest
 | `monitoring/grafana/dashboards/claims-overview.json` | Defines the version-controlled service dashboard. | Makes monitoring reproducible and accessible through one dashboard. |
 | `docs/runbooks/inference-api.md` | Guides diagnosis, safe recovery, verification, and incident evidence. | Connects alerts and metrics to an operational response. |
 
+## AWS infrastructure definition
+
+| File | What it does | Why it exists |
+| --- | --- | --- |
+| `infra/terraform/versions.tf` | Pins Terraform and the AWS provider and applies ownership tags. | Makes provider behavior and cost attribution repeatable. |
+| `infra/terraform/main.tf` | Defines protected S3, immutable ECR, retention, and an optional budget notification. | Supplies the persistent AWS foundation without creating it automatically. |
+| `infra/terraform/eks.tf` | Defines optional networking, IAM roles, EKS, and a small Spot node group behind `create_eks`. | Teaches the Kubernetes infrastructure while preventing accidental control-plane charges. |
+| `infra/terraform/variables.tf` | Declares region, environment, cost, version, CIDR, and EKS safety gates. | Forces risky or account-specific choices to be visible. |
+| `infra/terraform/outputs.tf` | Exposes bucket, repository, and optional cluster identifiers. | Gives later deployment stages stable integration points. |
+
 ## Reviewer web application
 
 | File | What it does | Why it exists |

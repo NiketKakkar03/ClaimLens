@@ -1,0 +1,8 @@
+aws_region        = "ca-central-1"
+environment       = "dev"
+cost_owner        = "replace-with-your-name"
+create_eks        = false
+eks_version       = null
+eks_public_access_cidrs = ["REPLACE_WITH_YOUR_PUBLIC_IP/32"]
+monthly_budget_usd = 10
+budget_email      = ""

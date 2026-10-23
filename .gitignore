@@ -12,6 +12,10 @@ data/lakehouse/
 mlruns/
 *.db
 *.log
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
 .DS_Store
 frontend/node_modules/
 frontend/dist/
