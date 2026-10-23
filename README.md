@@ -4,11 +4,25 @@ A learning and portfolio project for ML engineering and ML platform operations, 
 
 ## Current status
 
-Design interview in progress. This repository currently contains planning and design documentation; the application, models, pipelines, dashboards, and cloud deployment have not been implemented. Setup commands, application URLs, metrics access, and measured results will be added when they exist.
+The project design is complete and the first local end-to-end severity slice is implemented: reproducible synthetic data, point-in-time features, baseline comparison, MLflow tracking, a saved model, model evidence, and a FastAPI prediction endpoint. The reviewer web application, lakehouse, orchestration, monitoring dashboards, and cloud validation follow in later milestones.
 
 Build the complete data-to-prediction workflow locally first, then deliver the web application and platform capabilities in separate releases. The web application will use React, TypeScript, Vite, FastAPI, PostgreSQL, and locally hosted Keycloak for login. Its first release gives reviewers a shared synthetic claim queue; individual assignments follow later. Avoid personal spending and use real AWS only for reviewed, short-lived credit-funded validation where feasible.
 
-The planned normal startup runs the application, database, prediction service, and local login service. Separate commands will start training, detailed monitoring, and Kubernetes exercises as needed. Startup commands are not available yet.
+## Run the local severity slice
+
+Requirements: Python 3.12 and [uv](https://docs.astral.sh/uv/). These commands do not call paid services.
+
+```bash
+make install
+make check
+make test
+make build-local
+make serve
+```
+
+Open the interactive API documentation at <http://localhost:8000/docs>, readiness at <http://localhost:8000/health/ready>, and Prometheus-format service metrics at <http://localhost:8000/metrics>. Training results are written to `artifacts/model/training-metrics.json` and `artifacts/model/MODEL_CARD.md`; MLflow uses the local database `artifacts/mlflow.db`.
+
+After `make build-local`, the same API can run in a container with `docker compose up --build`. The later application milestone will add the dashboard, database, and login service to this normal startup path.
 
 ## Documentation
 
@@ -22,6 +36,8 @@ The planned normal startup runs the application, database, prediction service, a
 - [Synthetic data specification](docs/synthetic-data-specification.md): generated entities, label semantics, and limitations.
 - [Threat model](docs/threat-model.md): assets, initial threats, and planned controls.
 - [Baseline success metrics](docs/baseline-success-metrics.md): acceptance criteria that later evidence must substantiate.
+- [Code guide](docs/CODE_GUIDE.md): file-by-file explanation of implemented scripts and how their logic connects.
+- [First local baseline evidence](docs/evidence/local-baseline-2026-10-22.md): recorded candidate comparison, held-out results, verification, and limitations.
 
 ## Architecture decisions
 

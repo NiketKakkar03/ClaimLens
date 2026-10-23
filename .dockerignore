@@ -1,0 +1,8 @@
+.git
+.venv
+.pytest_cache
+.ruff_cache
+artifacts
+data
+frontend
+__pycache__
