@@ -21,6 +21,45 @@ services:
       - ./data/generated:/app/data/generated:ro
       - ./data/lakehouse:/app/data/lakehouse
       - spark-ivy-v2:/home/sparkuser/.ivy2.5.2
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: claims
+      POSTGRES_USER: claims
+      POSTGRES_PASSWORD: local-only-password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U claims -d claims"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  reviewer-api:
+    build: .
+    command: ["uvicorn", "claims_intelligence.application.api:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      CLAIMS_AUTH_MODE: demo
+      CLAIMS_DATABASE_URL: postgresql+psycopg://claims:local-only-password@postgres:5432/claims
+    ports:
+      - "${CLAIMS_REVIEWER_API_PORT:-8020}:8000"
+    volumes:
+      - ./artifacts:/app/artifacts:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  reviewer-web:
+    build: ./frontend
+    ports:
+      - "${CLAIMS_WEB_PORT:-5174}:80"
+    depends_on:
+      reviewer-api:
+        condition: service_healthy
 
 volumes:
   spark-ivy-v2:
+  postgres-data:

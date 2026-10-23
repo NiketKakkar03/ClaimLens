@@ -1,6 +1,6 @@
 # Proposed application access control
 
-Status: mixed accepted design and proposals; no access-control implementation exists yet. Login, seeded reviewer accounts, attribution of actions, and self-hosted local Keycloak are accepted. Detailed role boundaries and session implementation remain proposals.
+Status: the first backend role boundary and attributed audit trail are implemented. Local demo headers stand in for identity only during development; they are not authentication. Login, seeded reviewer accounts, and self-hosted local Keycloak remain accepted next-stage work. Assignment-level boundaries remain a later proposal.
 
 Interview update: the user provisionally accepted the three role names but needs a plain-language explanation before confirming their boundaries. Distinct model-governance identities remain undecided. There is one human operator; account permissions would be configured through the project's local setup. They do not require permission from an external organization.
 

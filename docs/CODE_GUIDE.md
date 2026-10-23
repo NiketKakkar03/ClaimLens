@@ -27,3 +27,17 @@ This is the navigation map for implemented code. It will grow after every milest
 | `Makefile` | Groups common install, validation, training, and serving commands. | Reduces command memorization. |
 | `scripts/demo_local.sh` | Trains on 1,000 claims, starts the inference container, waits for readiness, requests a prediction, and prints metrics and access URLs. | Proves the local vertical slice through one learner-facing command. |
 | `.github/workflows/ci.yml` | Runs formatting, linting, and tests on pushes and pull requests. | Supplies automated quality evidence. |
+
+## Reviewer web application
+
+| File | What it does | Why it exists |
+| --- | --- | --- |
+| `src/claims_intelligence/application/db.py` | Defines PostgreSQL/SQLite records for claims, immutable prediction history, and audit events. | Keeps workflow state durable and separate from analytical Delta tables. |
+| `src/claims_intelligence/application/auth.py` | Resolves local demo identities and enforces reviewer, supervisor, and audit-reader roles. | Centralizes the access-control boundary; demo headers are explicitly not production authentication. |
+| `src/claims_intelligence/application/schemas.py` | Defines validated create, decision, prediction, claim, and audit payloads. | Gives the frontend and backend a clear interface. |
+| `src/claims_intelligence/application/api.py` | Exposes the shared queue, claim creation, prediction, human decision, and audit endpoints. | Implements the end-to-end reviewer workflow and preserves model/human disagreement. |
+| `tests/integration/test_reviewer_application.py` | Exercises claim creation through prediction and decision, then checks audit attribution and a forbidden audit-reader write. | Demonstrates workflow integrity and backend RBAC. |
+| `frontend/src/App.tsx` | Renders the queue, claim evidence, prediction history, recommendation, and human decision form and calls the API. | Gives reviewers one coherent operational workspace. |
+| `frontend/src/styles.css` | Supplies the responsive visual system and priority states. | Creates a proper, usable web interface without Streamlit. |
+| `frontend/Dockerfile` | Builds static React assets and serves them from Nginx. | Produces a small deployable frontend image. |
+| `frontend/nginx.conf` | Serves the single-page application and proxies `/api` to FastAPI. | Keeps browser requests same-origin and gives one user-facing URL. |

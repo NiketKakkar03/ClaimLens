@@ -6,4 +6,6 @@ pandas>=2.2,<3
 prometheus-client>=0.21,<1
 pydantic>=2.10,<3
 scikit-learn>=1.6,<2
+sqlalchemy>=2,<3
+psycopg[binary]>=3.2,<4
 uvicorn[standard]>=0.34,<1

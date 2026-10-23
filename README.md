@@ -4,7 +4,7 @@ A learning and portfolio project for ML engineering and ML platform operations, 
 
 ## Current status
 
-The project design is complete and the first local end-to-end severity slice is implemented: reproducible synthetic data, point-in-time features, baseline comparison, MLflow tracking, a saved model, model evidence, and a FastAPI prediction endpoint. The reviewer web application, lakehouse, orchestration, monitoring dashboards, and cloud validation follow in later milestones.
+The project design, local severity slice, local Spark/Delta lakehouse, and first reviewer web application are implemented. The web release includes React/TypeScript, FastAPI, PostgreSQL, prediction history, human decisions, audit events, and backend role checks. Keycloak login, orchestration, monitoring dashboards, and cloud validation follow in later milestones.
 
 Build the complete data-to-prediction workflow locally first, then deliver the web application and platform capabilities in separate releases. The web application will use React, TypeScript, Vite, FastAPI, PostgreSQL, and locally hosted Keycloak for login. Its first release gives reviewers a shared synthetic claim queue; individual assignments follow later. Avoid personal spending and use real AWS only for reviewed, short-lived credit-funded validation where feasible.
 
@@ -28,6 +28,12 @@ To learn the medallion lakehouse flow without a paid Databricks account or a hos
 
 For the complete one-command training-to-prediction demonstration, run `make demo`. It trains a small reproducible model, starts the container, waits for model readiness, prints a real prediction and its Prometheus metrics, and leaves the API running for exploration. Stop it with `docker compose down`.
 
+## Run the reviewer web application
+
+Train the local artifact once with `make build-local`, then run `make app`. Open <http://localhost:5174> for the reviewer dashboard. The direct reviewer API and its interactive documentation are available at <http://localhost:8020/docs>. PostgreSQL is internal to the Compose network and is not published to the host.
+
+The current interface uses one local reviewer identity so the workflow is easy to learn. The `CLAIMS_AUTH_MODE=demo` headers are not secure authentication and must not be used outside local development. The next security milestone connects Keycloak login and validated OIDC identity; the API role checks already form the authorization seam it will use.
+
 ## Documentation
 
 - [Original project proposal](Project.md): the initial architecture, technology scope, and roadmap. Read with the interview record because some details have changed during design.
@@ -43,6 +49,7 @@ For the complete one-command training-to-prediction demonstration, run `make dem
 - [Code guide](docs/CODE_GUIDE.md): file-by-file explanation of implemented scripts and how their logic connects.
 - [First local baseline evidence](docs/evidence/local-baseline-2026-10-22.md): recorded candidate comparison, held-out results, verification, and limitations.
 - [Local Spark/Delta evidence](docs/evidence/local-lakehouse-2026-10-22.md): measured medallion row counts, issues found, and local container facts.
+- [Reviewer application evidence](docs/evidence/reviewer-application-2026-10-22.md): verified UI/API/PostgreSQL workflow, RBAC denial, build results, and current login limitation.
 
 ## Architecture decisions
 

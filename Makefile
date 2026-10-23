@@ -1,4 +1,4 @@
-.PHONY: install install-spark check test build-local build-lakehouse docker-lakehouse demo serve
+.PHONY: install install-spark check test web-check build-local build-lakehouse docker-lakehouse demo app serve
 
 install:
 	uv sync --extra dev --extra training
@@ -13,6 +13,9 @@ check:
 test:
 	uv run pytest
 
+web-check:
+	cd frontend && npx --yes pnpm@10.20.0 lint && npx --yes pnpm@10.20.0 build
+
 build-local:
 	uv run claims-intelligence build-local
 
@@ -24,6 +27,9 @@ docker-lakehouse:
 
 demo:
 	./scripts/demo_local.sh
+
+app:
+	docker compose up --detach --build postgres reviewer-api reviewer-web
 
 serve:
 	uv run uvicorn claims_intelligence.serving.api:app --host 0.0.0.0 --port 8000
