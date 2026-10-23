@@ -74,3 +74,24 @@ def build_lakehouse(
     typer.echo("Local Delta lakehouse ready")
     for name, count in counts.items():
         typer.echo(f"{name}: {count}")
+
+
+@app.command("drift-report")
+def drift_report(
+    data_dir: Path = settings.data_dir,
+    artifact: Path = settings.artifact_dir / "model.joblib",
+    output: Path = Path("artifacts/monitoring"),
+) -> None:
+    """Compare current generated claims with the model's training reference window."""
+    from claims_intelligence.monitoring.drift import calculate_drift, write_drift_report
+    from claims_intelligence.training.artifact import ModelBundle
+
+    policies = pd.read_csv(data_dir / "policies.csv")
+    claims = pd.read_csv(data_dir / "claims.csv")
+    rows = build_training_rows(policies, claims)
+    report = calculate_drift(ModelBundle.load(artifact), rows)
+    write_drift_report(report, output)
+    typer.echo(
+        f"Drift status: {report['status']}; features flagged: "
+        f"{', '.join(report['drifted_features']) or 'none'}"
+    )

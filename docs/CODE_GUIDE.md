@@ -14,6 +14,7 @@ This is the navigation map for implemented code. It will grow after every milest
 | `src/claims_intelligence/training/train.py` | Uses chronological splits, compares a median baseline with a random forest, records MLflow runs, evaluates the winner, and saves it. | Makes model selection measurable and repeatable. |
 | `src/claims_intelligence/training/artifact.py` | Packages preprocessing, model, thresholds, metadata, and one prediction interface in a versioned artifact. | Training and serving use the same transformations and decision rules. |
 | `src/claims_intelligence/training/evidence.py` | Writes metrics as JSON and a readable model card. | Preserves results and limitations for later review. |
+| `src/claims_intelligence/monitoring/drift.py` | Compares current features with reference statistics stored in the model bundle and writes JSON/Markdown reports. | Turns distribution changes into an investigation signal without automatic retraining. |
 | `src/claims_intelligence/serving/schemas.py` | Validates the prediction request and response. | Rejects malformed inputs at the API boundary. |
 | `src/claims_intelligence/serving/api.py` | Loads the model and exposes health, metrics, and prediction endpoints. | Turns the trained artifact into an observable service. |
 | `src/claims_intelligence/cli.py` | Provides `generate`, `train`, and `build-local` commands. | Gives a learner a short, repeatable interface to the workflow. |
@@ -27,6 +28,10 @@ This is the navigation map for implemented code. It will grow after every milest
 | `Makefile` | Groups common install, validation, training, and serving commands. | Reduces command memorization. |
 | `scripts/demo_local.sh` | Trains on 1,000 claims, starts the inference container, waits for readiness, requests a prediction, and prints metrics and access URLs. | Proves the local vertical slice through one learner-facing command. |
 | `.github/workflows/ci.yml` | Runs formatting, linting, and tests on pushes and pull requests. | Supplies automated quality evidence. |
+| `.github/workflows/drift-report.yml` | Runs the reproducible training and drift report every Monday or on demand, then uploads its evidence. | Demonstrates scheduled monitoring without a paid scheduler. |
+| `monitoring/prometheus.yml` | Scrapes inference metrics every five seconds. | Collects the time series used by the dashboard. |
+| `monitoring/grafana/dashboards/claims-overview.json` | Defines the version-controlled service dashboard. | Makes monitoring reproducible and accessible through one dashboard. |
+| `docs/runbooks/inference-api.md` | Guides diagnosis, safe recovery, verification, and incident evidence. | Connects alerts and metrics to an operational response. |
 
 ## Reviewer web application
 

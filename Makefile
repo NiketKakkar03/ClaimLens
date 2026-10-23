@@ -1,4 +1,4 @@
-.PHONY: install install-spark check test web-check build-local build-lakehouse docker-lakehouse demo app serve
+.PHONY: install install-spark check test web-check build-local build-lakehouse docker-lakehouse drift-report demo app monitoring serve
 
 install:
 	uv sync --extra dev --extra training
@@ -25,11 +25,17 @@ build-lakehouse:
 docker-lakehouse:
 	docker compose --profile data run --rm lakehouse
 
+drift-report:
+	uv run claims-intelligence drift-report
+
 demo:
 	./scripts/demo_local.sh
 
 app:
 	docker compose up --detach --build postgres reviewer-api reviewer-web
+
+monitoring:
+	docker compose --profile monitoring up --detach inference-api prometheus grafana
 
 serve:
 	uv run uvicorn claims_intelligence.serving.api:app --host 0.0.0.0 --port 8000

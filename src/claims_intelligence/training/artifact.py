@@ -32,6 +32,10 @@ class ModelBundle:
     metrics: dict[str, float]
     top_factors: list[str]
     candidate_validation_mae: dict[str, float]
+    reference_statistics: dict[str, Any]
+    dataset_version: str
+    code_version: str
+    registry_version: str
 
     def predict(self, features: dict[str, Any]) -> Prediction:
         missing = sorted(set(self.feature_columns).difference(features))

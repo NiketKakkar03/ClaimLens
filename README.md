@@ -34,6 +34,10 @@ Train the local artifact once with `make build-local`, then run `make app`. Open
 
 The current interface uses one local reviewer identity so the workflow is easy to learn. The `CLAIMS_AUTH_MODE=demo` headers are not secure authentication and must not be used outside local development. The next security milestone connects Keycloak login and validated OIDC identity; the API role checks already form the authorization seam it will use.
 
+## Run monitoring and drift checks
+
+Run `make monitoring` to start Prometheus and Grafana alongside inference. Open Grafana at <http://localhost:3001> using the documented local-only credentials `admin` / `local-only-admin`; the provisioned Claims Intelligence Overview dashboard is ready without manual setup. Prometheus is available at <http://localhost:9091>. Run `make drift-report` to write JSON and Markdown results under `artifacts/monitoring/`. The inference incident procedure is in [the runbook](docs/runbooks/inference-api.md).
+
 ## Documentation
 
 - [Original project proposal](Project.md): the initial architecture, technology scope, and roadmap. Read with the interview record because some details have changed during design.
@@ -50,6 +54,7 @@ The current interface uses one local reviewer identity so the workflow is easy t
 - [First local baseline evidence](docs/evidence/local-baseline-2026-10-22.md): recorded candidate comparison, held-out results, verification, and limitations.
 - [Local Spark/Delta evidence](docs/evidence/local-lakehouse-2026-10-22.md): measured medallion row counts, issues found, and local container facts.
 - [Reviewer application evidence](docs/evidence/reviewer-application-2026-10-22.md): verified UI/API/PostgreSQL workflow, RBAC denial, build results, and current login limitation.
+- [Model lifecycle and monitoring evidence](docs/evidence/model-monitoring-2026-10-23.md): three-candidate comparison, MLflow registry verification, drift results, and live dashboard checks.
 
 ## Architecture decisions
 

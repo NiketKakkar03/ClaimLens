@@ -21,7 +21,11 @@ def test_trained_artifact_serves_prediction(tmp_path) -> None:
     write_training_evidence(loaded, tmp_path)
     assert (tmp_path / "training-metrics.json").exists()
     assert (tmp_path / "MODEL_CARD.md").exists()
-    assert set(loaded.candidate_validation_mae) == {"median_baseline", "random_forest"}
+    assert set(loaded.candidate_validation_mae) == {
+        "median_baseline",
+        "random_forest",
+        "hist_gradient_boosting",
+    }
     payload = {
         "claim_id": "clm_demo_1042",
         "policy_tenure_days": 842,

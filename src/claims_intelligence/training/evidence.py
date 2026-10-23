@@ -23,6 +23,10 @@ def write_training_evidence(bundle: ModelBundle, output_dir: Path) -> None:
         "candidate_validation_mae": bundle.candidate_validation_mae,
         "features": bundle.feature_columns,
         "top_factors": bundle.top_factors,
+        "reference_statistics": bundle.reference_statistics,
+        "dataset_version": bundle.dataset_version,
+        "code_version": bundle.code_version,
+        "registry_version": bundle.registry_version,
     }
     (output_dir / "training-metrics.json").write_text(
         json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8"
