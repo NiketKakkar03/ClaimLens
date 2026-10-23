@@ -44,6 +44,7 @@ The Terraform foundation is under [`infra/terraform`](infra/terraform/README.md)
 
 ## Documentation
 
+- [MVP completion status](docs/MVP_STATUS.md): requirement-by-requirement implementation evidence and honest post-MVP boundaries.
 - [Original project proposal](Project.md): the initial architecture, technology scope, and roadmap. Read with the interview record because some details have changed during design.
 - [Confirmed design direction](docs/design-session.md): decisions accepted in the interview and the remaining open questions.
 - [Domain glossary](GLOSSARY.md): agreed meanings of claims, predictions, and review terminology.
