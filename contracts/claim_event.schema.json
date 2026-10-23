@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claims-intelligence.local/contracts/claim_event.schema.json",
+  "title": "Synthetic motor claim event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claim_id", "policy_id", "incident_timestamp", "reported_timestamp", "claim_type", "channel", "initial_estimate", "damage_indicator_count"],
+  "properties": {
+    "claim_id": {"type": "string", "pattern": "^clm_[A-Za-z0-9_-]+$"},
+    "policy_id": {"type": "string", "pattern": "^pol_[A-Za-z0-9_-]+$"},
+    "incident_timestamp": {"type": "string", "format": "date-time"},
+    "reported_timestamp": {"type": "string", "format": "date-time"},
+    "claim_type": {"enum": ["collision", "theft", "weather", "glass", "liability"]},
+    "channel": {"enum": ["mobile", "web", "phone", "broker"]},
+    "initial_estimate": {"type": "number", "minimum": 0},
+    "damage_indicator_count": {"type": "integer", "minimum": 0},
+    "weather_category": {"enum": ["clear", "rain", "snow", "wind"]},
+    "final_paid_amount": {"type": "number", "minimum": 0},
+    "closed_timestamp": {"type": "string", "format": "date-time"}
+  }
+}

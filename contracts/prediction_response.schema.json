@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claims-intelligence.local/contracts/prediction_response.schema.json",
+  "title": "Claim severity prediction response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claim_id", "predicted_severity", "priority_band", "model_name", "model_version", "model_alias", "top_factors", "prediction_id"],
+  "properties": {
+    "claim_id": {"type": "string"},
+    "predicted_severity": {"type": "number", "minimum": 0},
+    "priority_band": {"enum": ["standard", "elevated", "urgent"]},
+    "model_name": {"type": "string"},
+    "model_version": {"type": "string"},
+    "model_alias": {"type": "string"},
+    "top_factors": {"type": "array", "items": {"type": "string"}, "maxItems": 10},
+    "prediction_id": {"type": "string"}
+  }
+}

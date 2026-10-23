@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.env
+artifacts/
+data/generated/
+data/lakehouse/
+mlruns/
+*.db
+*.log
+.DS_Store
+frontend/node_modules/
+frontend/dist/

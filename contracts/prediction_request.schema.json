@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claims-intelligence.local/contracts/prediction_request.schema.json",
+  "title": "Claim severity prediction request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["claim_id", "policy_tenure_days", "claim_type", "reporting_delay_hours", "initial_estimate", "prior_claim_count_365d", "damage_indicator_count", "region_code", "channel", "asset_age_years", "coverage_type", "deductible_band"],
+  "properties": {
+    "claim_id": {"type": "string", "pattern": "^clm_[A-Za-z0-9_-]+$"},
+    "policy_tenure_days": {"type": "number", "minimum": 0},
+    "claim_type": {"enum": ["collision", "theft", "weather", "glass", "liability"]},
+    "reporting_delay_hours": {"type": "number", "minimum": 0},
+    "initial_estimate": {"type": "number", "minimum": 0},
+    "prior_claim_count_365d": {"type": "integer", "minimum": 0},
+    "prior_paid_amount_730d": {"type": "number", "minimum": 0, "default": 0},
+    "damage_indicator_count": {"type": "integer", "minimum": 0},
+    "region_code": {"type": "string"},
+    "channel": {"enum": ["mobile", "web", "phone", "broker"]},
+    "asset_age_years": {"type": "integer", "minimum": 0},
+    "coverage_type": {"type": "string"},
+    "deductible_band": {"type": "string"}
+  }
+}
