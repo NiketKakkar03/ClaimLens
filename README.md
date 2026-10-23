@@ -4,7 +4,7 @@ A learning and portfolio project for ML engineering and ML platform operations, 
 
 ## Current status
 
-The project design, local severity slice, local Spark/Delta lakehouse, and first reviewer web application are implemented. The web release includes React/TypeScript, FastAPI, PostgreSQL, prediction history, human decisions, audit events, and backend role checks. Keycloak login, orchestration, monitoring dashboards, and cloud validation follow in later milestones.
+The project design, local severity slice, local Spark/Delta lakehouse, reviewer application, local Keycloak login, model lifecycle, monitoring dashboard, and cost-gated Terraform foundation are implemented. The web release includes React/TypeScript, FastAPI, PostgreSQL, OIDC access-token validation, prediction history, human decisions, audit events, and backend role checks. Orchestration and cloud validation follow in later milestones.
 
 Build the complete data-to-prediction workflow locally first, then deliver the web application and platform capabilities in separate releases. The web application will use React, TypeScript, Vite, FastAPI, PostgreSQL, and locally hosted Keycloak for login. Its first release gives reviewers a shared synthetic claim queue; individual assignments follow later. Avoid personal spending and use real AWS only for reviewed, short-lived credit-funded validation where feasible.
 
@@ -30,9 +30,19 @@ For the complete one-command training-to-prediction demonstration, run `make dem
 
 ## Run the reviewer web application
 
-Train the local artifact once with `make build-local`, then run `make app`. Open <http://localhost:5174> for the reviewer dashboard. The direct reviewer API and its interactive documentation are available at <http://localhost:8020/docs>. PostgreSQL is internal to the Compose network and is not published to the host.
+Train the local artifact once with `make build-local`, then run `make app`. Open <http://localhost:5174> for the reviewer dashboard. Keycloak redirects the browser to its login page on <http://localhost:8180>. The direct reviewer API and its interactive documentation are available at <http://localhost:8020/docs>. PostgreSQL is internal to the Compose network and is not published to the host.
 
-The current interface uses one local reviewer identity so the workflow is easy to learn. The `CLAIMS_AUTH_MODE=demo` headers are not secure authentication and must not be used outside local development. The next security milestone connects Keycloak login and validated OIDC identity; the API role checks already form the authorization seam it will use.
+The imported `claims-local` realm contains three disposable demonstration identities. These intentionally obvious local-only values are not real credentials and must never be reused or deployed:
+
+| Username | Password | Role |
+| --- | --- | --- |
+| `local-reviewer` | `reviewer-local-only` | reviewer |
+| `local-supervisor` | `supervisor-local-only` | supervisor |
+| `local-auditor` | `auditor-local-only` | audit-reader |
+
+Authentication answers “who is this?”: Keycloak signs a five-minute access token after login, and FastAPI validates its signature, issuer, audience, expiry, and subject. Authorization answers “what may this identity do?”: FastAPI maps exactly one application role and denies writes by the audit reader. UI visibility is only a convenience; direct API requests receive the same backend checks. Logout ends the Keycloak browser session. Disabling an account blocks new login and token refresh; an already issued token remains usable only until its short expiry. Realm login and administrator changes are retained as Keycloak events in its local volume.
+
+`CLAIMS_AUTH_MODE=test` is the only header override. It accepts `X-Test-User` and `X-Test-Role` solely for automated tests; normal Compose operation always uses `oidc` and ignores those headers.
 
 ## Run monitoring and drift checks
 
@@ -59,6 +69,7 @@ The Terraform foundation is under [`infra/terraform`](infra/terraform/README.md)
 - [First local baseline evidence](docs/evidence/local-baseline-2026-10-22.md): recorded candidate comparison, held-out results, verification, and limitations.
 - [Local Spark/Delta evidence](docs/evidence/local-lakehouse-2026-10-22.md): measured medallion row counts, issues found, and local container facts.
 - [Reviewer application evidence](docs/evidence/reviewer-application-2026-10-22.md): verified UI/API/PostgreSQL workflow, RBAC denial, build results, and current login limitation.
+- [Local authentication evidence](docs/evidence/local-authentication-2026-10-23.md): verified Keycloak/OIDC login, signed-token validation, logout, and direct-API authorization checks.
 - [Model lifecycle and monitoring evidence](docs/evidence/model-monitoring-2026-10-23.md): three-candidate comparison, MLflow registry verification, drift results, and live dashboard checks.
 - [Terraform validation evidence](docs/evidence/terraform-validation-2026-10-23.md): defined AWS resources, local validation, cost gates, and the explicit no-apply boundary.
 

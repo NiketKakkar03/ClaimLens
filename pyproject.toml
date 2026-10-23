@@ -25,6 +25,7 @@ dependencies = [
 [project.optional-dependencies]
 application = [
   "psycopg[binary]>=3.2,<4",
+  "pyjwt[crypto]>=2.10,<3",
 ]
 dev = [
   "jsonschema>=4.23,<5",

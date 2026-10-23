@@ -34,12 +34,31 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.3
+    command: ["start-dev", "--import-realm", "--health-enabled=true"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: local-admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: local-only-admin
+    ports:
+      - "${CLAIMS_KEYCLOAK_PORT:-8180}:8080"
+    volumes:
+      - ./keycloak/claims-local-realm.json:/opt/keycloak/data/import/claims-local-realm.json:ro
+      - keycloak-data:/opt/keycloak/data
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000; printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3; grep -q '200 OK' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
   reviewer-api:
     build: .
     command: ["uvicorn", "claims_intelligence.application.api:app", "--host", "0.0.0.0", "--port", "8000"]
     environment:
-      CLAIMS_AUTH_MODE: demo
+      CLAIMS_AUTH_MODE: oidc
       CLAIMS_DATABASE_URL: postgresql+psycopg://claims:local-only-password@postgres:5432/claims
+      CLAIMS_OIDC_ISSUER: http://localhost:${CLAIMS_KEYCLOAK_PORT:-8180}/realms/claims-local
+      CLAIMS_OIDC_AUDIENCE: claims-reviewer
+      CLAIMS_OIDC_JWKS_URL: http://keycloak:8080/realms/claims-local/protocol/openid-connect/certs
     ports:
       - "${CLAIMS_REVIEWER_API_PORT:-8020}:8000"
     volumes:
@@ -47,13 +66,20 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      keycloak:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/ready')"]
       interval: 10s
       timeout: 3s
       retries: 5
   reviewer-web:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_OIDC_URL: http://localhost:${CLAIMS_KEYCLOAK_PORT:-8180}
+        VITE_OIDC_REALM: claims-local
+        VITE_OIDC_CLIENT_ID: claims-reviewer
     ports:
       - "${CLAIMS_WEB_PORT:-5174}:80"
     depends_on:
@@ -89,3 +115,4 @@ volumes:
   postgres-data:
   prometheus-data:
   grafana-data:
+  keycloak-data:

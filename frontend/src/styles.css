@@ -11,6 +11,9 @@ h1, h2, h3, h4, p { margin-top: 0; }
 h1 { font: 700 1.35rem 'Manrope'; margin-bottom: 0; }
 .eyebrow { color: #76d7c4; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 5px; }
 .identity { color: #c8d2df; font-size: .85rem; }
+.logout { margin-left: 14px; border: 1px solid #718096; border-radius: 7px; padding: 6px 10px; color: white; background: transparent; }
+.logout:hover { background: #ffffff18; }
+.login-error { margin: 10vh auto; max-width: 520px; padding: 24px; background: white; border-radius: 12px; }
 .status-dot { width: 8px; height: 8px; display: inline-block; border-radius: 50%; background: #56d8a8; margin-right: 8px; box-shadow: 0 0 0 4px #56d8a822; }
 main { width: min(1440px, 92vw); margin: 34px auto 70px; }
 .hero { color: white; padding: 32px 38px; border-radius: 18px; background: linear-gradient(120deg, #18304d, #185c68); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 18px 35px #1c35451f; }

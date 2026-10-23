@@ -82,6 +82,10 @@ def create_reviewer_app(
             ).all()
             return [_claim_view(claim) for claim in claims]
 
+    @app.get("/api/session")
+    def session_identity(actor: ActorDependency) -> dict[str, str]:
+        return {"subject": actor.subject, "username": actor.username, "role": actor.role.value}
+
     @app.post("/api/claims", response_model=ClaimView, status_code=201)
     def create_claim(payload: ClaimCreate, request: Request, actor: ActorDependency) -> ClaimView:
         require_writer(actor)

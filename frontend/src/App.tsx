@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { accessToken, keycloak } from './auth'
 
 type Priority = 'standard' | 'elevated' | 'urgent'
 type Prediction = {
@@ -36,9 +37,14 @@ const demoClaim = {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = await accessToken()
   const response = await fetch(path, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      ...(init?.headers ?? {}),
+    },
   })
   if (!response.ok) {
     const body = await response.json().catch(() => ({ detail: response.statusText }))
@@ -58,6 +64,11 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [decision, setDecision] = useState<Priority>('elevated')
   const [reason, setReason] = useState('Manual inspection needs specialist review')
+  const username = keycloak.tokenParsed?.preferred_username ?? 'signed-in user'
+  const role = ['reviewer', 'supervisor', 'audit-reader'].find((candidate) =>
+    keycloak.hasRealmRole(candidate),
+  )
+  const canWrite = role === 'reviewer' || role === 'supervisor'
 
   const selected = useMemo(
     () => claims.find((claim) => claim.claim_id === selectedId) ?? claims[0],
@@ -102,7 +113,10 @@ export default function App() {
           <span className="eyebrow">Claims operations</span>
           <h1>Review intelligence</h1>
         </div>
-        <div className="identity"><span className="status-dot" /> Local reviewer · reviewer</div>
+        <div className="identity">
+          <span className="status-dot" /> {username} · {role ?? 'no application role'}
+          <button className="logout" onClick={() => keycloak.logout({ redirectUri: window.location.origin })}>Log out</button>
+        </div>
       </header>
 
       <main>
@@ -112,7 +126,7 @@ export default function App() {
             <h2>See the signal. Keep the judgment human.</h2>
             <p>Severity estimates help order review work; they never approve or reject a claim.</p>
           </div>
-          <button className="primary" onClick={addDemo} disabled={busy || claims.some((c) => c.claim_id === demoClaim.claim_id)}>
+          <button className="primary" onClick={addDemo} disabled={!canWrite || busy || claims.some((c) => c.claim_id === demoClaim.claim_id)}>
             Add demo claim
           </button>
         </section>
@@ -163,7 +177,7 @@ export default function App() {
                     <small>Model {prediction.model_version} · {new Date(prediction.created_at).toLocaleString()}</small>
                     <p>Leading factors: {prediction.top_factors.join(', ')}</p>
                   </article>)}
-                  <button className="primary full" disabled={busy} onClick={() => act(() => request(`/api/claims/${selected.claim_id}/predictions`, { method: 'POST' }), 'Prediction saved with its input snapshot')}>Request prediction</button>
+                  <button className="primary full" disabled={!canWrite || busy} onClick={() => act(() => request(`/api/claims/${selected.claim_id}/predictions`, { method: 'POST' }), 'Prediction saved with its input snapshot')}>Request prediction</button>
                 </div>
               </div>
 
@@ -174,7 +188,7 @@ export default function App() {
                 <div><h4>Human review decision</h4><p>The reviewer may disagree with the model. A reason makes that judgment inspectable.</p></div>
                 <select value={decision} onChange={(event) => setDecision(event.target.value as Priority)}><option value="standard">Standard</option><option value="elevated">Elevated</option><option value="urgent">Urgent</option></select>
                 <input value={reason} onChange={(event) => setReason(event.target.value)} minLength={5} required />
-                <button className="secondary" disabled={busy}>Save decision</button>
+                <button className="secondary" disabled={!canWrite || busy}>Save decision</button>
               </form>
             </>}
           </section>

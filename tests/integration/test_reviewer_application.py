@@ -7,7 +7,8 @@ from claims_intelligence.data.synthetic import generate_synthetic_data
 from claims_intelligence.training.train import train_model
 
 
-def test_reviewer_workflow_and_read_only_role(tmp_path) -> None:
+def test_reviewer_workflow_and_read_only_role(tmp_path, monkeypatch) -> None:
+    monkeypatch.setenv("CLAIMS_AUTH_MODE", "test")
     generated = generate_synthetic_data(240, 100, seed=12)
     rows = build_training_rows(generated.policies, generated.claims)
     bundle = train_model(
@@ -59,6 +60,6 @@ def test_reviewer_workflow_and_read_only_role(tmp_path) -> None:
         denied = client.post(
             "/api/claims",
             json={**payload, "claim_id": "clm_forbidden"},
-            headers={"X-Demo-Role": "audit-reader", "X-Demo-User": "local-auditor"},
+            headers={"X-Test-Role": "audit-reader", "X-Test-User": "local-auditor"},
         )
         assert denied.status_code == 403

@@ -48,10 +48,14 @@ This is the navigation map for implemented code. It will grow after every milest
 | File | What it does | Why it exists |
 | --- | --- | --- |
 | `src/claims_intelligence/application/db.py` | Defines PostgreSQL/SQLite records for claims, immutable prediction history, and audit events. | Keeps workflow state durable and separate from analytical Delta tables. |
-| `src/claims_intelligence/application/auth.py` | Resolves local demo identities and enforces reviewer, supervisor, and audit-reader roles. | Centralizes the access-control boundary; demo headers are explicitly not production authentication. |
+| `keycloak/claims-local-realm.json` | Imports the local realm, PKCE client, short token lifetime, roles, event auditing, and disposable users. | Makes the development identity service reproducible. |
+| `src/claims_intelligence/application/auth.py` | Validates RS256 tokens against Keycloak's keys and enforces issuer, audience, expiry, required claims, and one application role. | Centralizes authentication and backend authorization; unsigned headers exist only in explicit test mode. |
 | `src/claims_intelligence/application/schemas.py` | Defines validated create, decision, prediction, claim, and audit payloads. | Gives the frontend and backend a clear interface. |
 | `src/claims_intelligence/application/api.py` | Exposes the shared queue, claim creation, prediction, human decision, and audit endpoints. | Implements the end-to-end reviewer workflow and preserves model/human disagreement. |
 | `tests/integration/test_reviewer_application.py` | Exercises claim creation through prediction and decision, then checks audit attribution and a forbidden audit-reader write. | Demonstrates workflow integrity and backend RBAC. |
+| `tests/unit/test_auth.py` | Signs controlled JWTs for role, expiry, audience, and forged-signature cases. | Proves token checks without trusting a live identity server. |
+| `tests/integration/test_authentication_boundary.py` | Calls the API without a token. | Proves anonymous direct requests are rejected. |
+| `frontend/src/auth.ts` | Configures Keycloak, refreshes access tokens, and supplies them to API requests. | Keeps browser login state in one module. |
 | `frontend/src/App.tsx` | Renders the queue, claim evidence, prediction history, recommendation, and human decision form and calls the API. | Gives reviewers one coherent operational workspace. |
 | `frontend/src/styles.css` | Supplies the responsive visual system and priority states. | Creates a proper, usable web interface without Streamlit. |
 | `frontend/Dockerfile` | Builds static React assets and serves them from Nginx. | Produces a small deployable frontend image. |

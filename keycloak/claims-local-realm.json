@@ -1,0 +1,78 @@
+{
+  "realm": "claims-local",
+  "enabled": true,
+  "displayName": "Claims Intelligence Local",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": false,
+  "accessTokenLifespan": 300,
+  "eventsEnabled": true,
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "roles": {
+    "realm": [
+      { "name": "reviewer" },
+      { "name": "supervisor" },
+      { "name": "audit-reader" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "claims-reviewer",
+      "name": "Claims Reviewer Web",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:5174/*"],
+      "webOrigins": ["http://localhost:5174"],
+      "protocol": "openid-connect",
+      "attributes": { "pkce.code.challenge.method": "S256" },
+      "protocolMappers": [
+        {
+          "name": "claims-reviewer-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "claims-reviewer",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "local-reviewer",
+      "firstName": "Local",
+      "lastName": "Reviewer",
+      "email": "reviewer@claims.local",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "reviewer-local-only", "temporary": false }],
+      "realmRoles": ["reviewer"]
+    },
+    {
+      "username": "local-supervisor",
+      "firstName": "Local",
+      "lastName": "Supervisor",
+      "email": "supervisor@claims.local",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "supervisor-local-only", "temporary": false }],
+      "realmRoles": ["supervisor"]
+    },
+    {
+      "username": "local-auditor",
+      "firstName": "Local",
+      "lastName": "Auditor",
+      "email": "auditor@claims.local",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "auditor-local-only", "temporary": false }],
+      "realmRoles": ["audit-reader"]
+    }
+  ]
+}

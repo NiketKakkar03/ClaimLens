@@ -1,6 +1,14 @@
 # Proposed application access control
 
-Status: the first backend role boundary and attributed audit trail are implemented. Local demo headers stand in for identity only during development; they are not authentication. Login, seeded reviewer accounts, and self-hosted local Keycloak remain accepted next-stage work. Assignment-level boundaries remain a later proposal.
+## Implemented local authentication boundary
+
+The normal local stack now uses a self-hosted Keycloak realm and OIDC Authorization Code flow with PKCE. React sends Keycloak's short-lived bearer access token; it never supplies a role header. FastAPI validates the RS256 signature from the realm JWKS plus the exact issuer, `claims-reviewer` audience, expiration, issued-at time, and subject. A token must contain exactly one of the `reviewer`, `supervisor`, or `audit-reader` realm roles.
+
+Authentication establishes the identity. Authorization independently decides which API operations that identity may perform. Reviewers and supervisors may currently use the shared queue and write workflow records. Audit readers may read claims and audit history but receive HTTP 403 for creation, prediction, and decision requests. These checks are in FastAPI; hiding browser controls is not a security boundary.
+
+The sole bypass is `CLAIMS_AUTH_MODE=test`, with clearly named `X-Test-User` and `X-Test-Role` headers for automated tests. Compose pins normal operation to `oidc`. Tokens expire after five minutes. Logout ends the browser SSO session. A disabled user cannot log in or refresh; a token already issued before a disable or role edit remains valid until that short expiry because the API performs offline JWT validation. Immediate revocation would require introspection or a denylist and remains future hardening.
+
+Status: local login, seeded demonstration accounts, signed-token validation, the first backend role boundary, and attributed audit trails are implemented. Assignment-level boundaries remain a later proposal.
 
 Interview update: the user provisionally accepted the three role names but needs a plain-language explanation before confirming their boundaries. Distinct model-governance identities remain undecided. There is one human operator; account permissions would be configured through the project's local setup. They do not require permission from an external organization.
 

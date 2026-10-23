@@ -32,7 +32,7 @@ demo:
 	./scripts/demo_local.sh
 
 app:
-	docker compose up --detach --build postgres reviewer-api reviewer-web
+	docker compose up --detach --build keycloak postgres reviewer-api reviewer-web
 
 monitoring:
 	docker compose --profile monitoring up --detach inference-api prometheus grafana
